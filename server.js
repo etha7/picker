@@ -5,6 +5,7 @@ const request = require("request")
 const app = express();
 const config = require("./src/config")
 
+app.use(express.static(path.join(__dirname, 'build')))
 
 function paramsToRequest(req, url){
  var options = { 
@@ -35,9 +36,11 @@ app.get('/image', function(req, res){
   })
 })
 
-
-
-app.get('/', function (req, res) {
+// The "catchall" handler: for any request that doesn't
+// match one above, send back React's index.html file.
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname+'/build/index.html'));
 });
+
 
 app.listen(process.env.PORT || 8080);

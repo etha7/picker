@@ -4,9 +4,11 @@ import './App.css';
 import Choice from './choice.js'
 import config from './config.json'
 
+var doof = null
 function handleClick(){
   console.log("test0")
   console.log("test1")
+  console.log(doof)
 }
 
 function App() {
@@ -17,7 +19,7 @@ function App() {
   const businessesURL = window.location.href+"businesses?"+params.map(t => encodeURI(t[0])+"="+encodeURI(t[1])+"&")
   useEffect(() => {
      fetch(businessesURL)
-      .then(response => response.json())
+      .then(response => {doof = response; return response.json()})
       .then(body => body.businesses.map((business) =>business.image_url))
       .then(image_urls => setImage([true, image_urls]))
     });

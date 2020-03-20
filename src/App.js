@@ -1,40 +1,58 @@
 import React, {useState, useEffect} from 'react';
+import { Query, ApolloProvider } from "react-apollo";
+import { ApolloClient } from "apollo-client"
+import  gql  from "graphql-tag";
+import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
+import { HttpLink } from 'apollo-link-http';
+
+
 import logo from './logo.svg';
 import './App.css';
 import Choice from './choice.js'
-import config from './config.json'
-
-var doof = null
-function handleClick(){
-  console.log("test0")
-  console.log("test1")
-  console.log(doof)
-}
-
+const cache = new InMemoryCache();
+const link = new HttpLink({
+  uri: "http://localhost:8080/graphql" //window.location.origin.toString()
+});
+const client = new ApolloClient({cache, link})
 function App() {
-  const [[isLoaded, images], setImage] = useState([false, []]);
+  const [[isLoaded, images], setImages] = useState([false, []]);
 
-  
-  const params = [["location", "Mission Viejo, CA"]]
-  const businessesURL = window.location.href+"businesses?"+params.map(t => encodeURI(t[0])+"="+encodeURI(t[1])+"&")
-  useEffect(() => {
-     fetch(businessesURL)
-      .then(response => {doof = response; return response.json()})
-      .then(body => body.businesses.map((business) =>business.image_url))
-      .then(image_urls => setImage([true, image_urls]))
-    });
-
+  const location = "Mission Viejo, CA"
+  var app_query = gql`
+    query Choices($location: String!){
+    search( location: $location,
+            limit: 5) {
+        total
+        business {
+            name
+            url
+            photos
+        }
+    }
+   }`
   return (
-    <div className="App">
-      <header className="App-header" >
-        <button onClick={handleClick}>test</button>
-        <img src={logo} className="App-logo" alt="logo"/>
-        <p>
-          Having a hard time choosing a place to eat? Picker can help!
-        </p>
-      </header>
-      {isLoaded ? images.map((image) => <Choice image={image} key={image}></Choice>) : <div>Loading choices!</div>}
-    </div>
+    <ApolloProvider client={client}>
+        <div className="App">
+          <header className="App-header" >
+            <img src={logo} className="App-logo" alt="logo"/>
+            <p>
+              Having a hard time choosing a place to eat? Picker can help!
+            </p>
+          </header>
+          <Query query={app_query} variables={{location}}>
+          {({ loading, error, data }) => { 
+                console.log(loading)
+                if(!loading){
+                  var business = data.search.business
+                  var images = business.map((b) => b.photos[0])   
+                  return(images.map((image) => <Choice image={image} key={image}></Choice>))
+                }else{
+                  return( <div>Loading!</div>)
+                }
+          }}
+          </Query>
+          </div>
+    </ApolloProvider>
   );
 }
 

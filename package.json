@@ -23,7 +23,8 @@
     "react-dom": "^16.13.0",
     "react-relay": "^9.0.0",
     "react-relay-network-modern": "^4.6.0",
-    "react-scripts": "3.4.0"
+    "react-scripts": "3.4.0",
+    "styled-components": "^5.0.1"
   },
   "scripts": {
     "start": "node server.js && react-scripts start",

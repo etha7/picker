@@ -11,7 +11,7 @@ import './App.css';
 import Choice from './choice.js'
 const cache = new InMemoryCache();
 const link = new HttpLink({
-  uri: "http://localhost:8080/graphql" //window.location.origin.toString()
+  uri: window.location.origin.toString()+"/graphql" 
 });
 const client = new ApolloClient({cache, link})
 function App() {
@@ -42,6 +42,9 @@ function App() {
           <Query query={app_query} variables={{location}}>
           {({ loading, error, data }) => { 
                 console.log(loading)
+                if(error){
+                  return ("Error"+error)
+                }
                 if(!loading){
                   var business = data.search.business
                   var images = business.map((b) => b.photos[0])   

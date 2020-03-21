@@ -2,7 +2,7 @@ import React from 'react'
 
 function Choice(props){
     return(
-        <div>     
+        <div className={props.className}>     
             <img src={props.image} alt="some choice"></img>
         </div>
     )

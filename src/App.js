@@ -13,12 +13,6 @@ import styled, { css } from 'styled-components'
 import './App.css';
 import Choice from './choice.js'
 
-// Import Animations
-import { Spring, animated, config as springC } from'react-spring/renderprops'
-import { useDrag } from 'react-use-gesture'
-
-
-
 //Initialize GraphQL
 const cache = new InMemoryCache();
 const link = new HttpLink({
@@ -30,12 +24,12 @@ const client = new ApolloClient({cache, link})
 const StyledChoice = styled(Choice)`
   background: #fff;
   height: 50vh;
+  width: 70vh;
   position: relative;
-  left: 50%;
-  transform: translateX(-50%);
   box-shadow: 0 10px 10px 0px grey;
   border-radius: 5% 5% 5% 5%;
   margin-bottom: 2%;
+  transform-origin: 50%, 50%, 0px;
 
   &:hover{
     box-shadow: 0 20px 20px 0px grey;
@@ -82,11 +76,7 @@ function App() {
                   var business = data.search.business
                   var images = business.map((b) => b.photos[0])   
                   return( images.map((image) => 
-                     <Spring key={image} config={springC.default}
-                        from={{width: 10}}
-                        to={{width: 100}}>
-                        {props => <StyledChoice width={props.width} image={image}></StyledChoice>}
-                     </Spring>
+                      <StyledChoice image={image}></StyledChoice>
                       )
                   )
                 }else{

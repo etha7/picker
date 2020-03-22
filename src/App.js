@@ -1,11 +1,7 @@
 import React, {useState, useEffect} from 'react';
 
 // Import graphQL
-import { Query, ApolloProvider } from "react-apollo";
-import { ApolloClient } from "apollo-client"
-import  gql  from "graphql-tag";
-import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
-import { HttpLink } from 'apollo-link-http';
+import { useQuery, ApolloProvider, ApolloClient, InMemoryCache, HttpLink, gql} from "@apollo/client";
 
 //Import Styling
 import logo from './logo.svg';
@@ -31,7 +27,7 @@ const StyledChoice = styled(Choice)`
   margin-bottom: 2%;
   transform-origin: 50%, 50%, 0px;
 
-  &:hover{
+  &:hover, &:active{
     box-shadow: 0 20px 20px 0px grey;
   }  
   img {
@@ -42,9 +38,8 @@ const StyledChoice = styled(Choice)`
     transform: translateY(-50%);
   }
 `
-
-//Main application
-function App() {
+function Main() {
+  const [gone] = useState(() => new Set())
 
   const location = "Mission Viejo, CA"
   var app_query = gql`
@@ -59,36 +54,39 @@ function App() {
         }
     }
    }`
-  return (
-    <ApolloProvider client={client}>
-        <div className="App">
-          <header className="App-header" >
-            <p>
-              Having a hard time choosing a place to eat? Picker can help!
-            </p>
-          </header>
-          <Query query={app_query} variables={{location}}>
-          {({ loading, error, data }) => { 
-                if(error){
-                  return ("Error"+error)
-                }
-                if(!loading){
-                  var business = data.search.business
-                  var images = business.map((b) => b.photos[0])   
-                  return( images.map((image) => 
-                      <StyledChoice image={image}></StyledChoice>
-                      )
-                  )
-                }else{
-                  return( 
-                          <img src={logo} className="App-logo" alt="logo"/>
-                  )
-                }
-          }}
-          </Query>
-          </div>
-    </ApolloProvider>
-  );
+  const {loading, error, data } = useQuery(app_query, {variables: {location}})
+  var choices;
+  if(error){
+    return (""+error)
+  }
+  if(!loading){
+    console.log(gone)
+
+    var business = data.search.business
+    var images = business.map((b) => b.photos[0])  
+    choices =  images.map((image, i) => <StyledChoice length={images.length} gone={gone} index={i} image={image} key={image}></StyledChoice>) 
+  }else{
+      choices = <img src={logo} className="App-logo" alt="logo"/>
+  }
+
+    return(
+          <div className="App">
+            <header className="App-header" >
+              <p>
+                Having a hard time choosing a place to eat? Picker can help!
+              </p>
+            </header>
+            {choices}
+            </div>
+    ) 
+}
+//Main application
+function App() {
+    return(
+        <ApolloProvider client={client}>
+        <Main></Main>
+        </ApolloProvider>
+    ) 
 }
 
 export default App;

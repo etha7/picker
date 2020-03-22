@@ -9,7 +9,6 @@ const {introspectSchema, makeRemoteExecutableSchema} = require('graphql-tools')
 const {ApolloServer, gql} = require('apollo-server-express')
 
 //GraphQL delegates requests from client to remote Yelp endpoint
-//import { graphqlExpress } from 'apollo-server-express';
 
 const { HttpLink }  = require("apollo-link-http")
 const link = new HttpLink({

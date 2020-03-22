@@ -1,6 +1,13 @@
+*{
+  user-select: none;
+}
+
 html, body {
   height: 100%;
   background-color: rgb(252, 232, 232);
+  overflow-x: hidden;
+
+
 
 }
 
@@ -34,7 +41,6 @@ html, body {
   font-size: calc(10px + 2vmin);
   color: black;
   padding: 10px 10px;
-
 }
 
 .App-link {

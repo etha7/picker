@@ -6,9 +6,6 @@ html, body {
   height: 100%;
   background-color: rgb(252, 232, 232);
   overflow-x: hidden;
-
-
-
 }
 
 .App {
@@ -20,7 +17,17 @@ html, body {
   justify-content: center;
 }
 
+.Choices {
+  position: relative;
+  width: 100%;
+  display: flex;         
+  justify-content: center;
+  align-items: center;
+
+}
+
 .App-logo {
+  position: relative;
   height: 40vmin;
   pointer-events: none;
 }
@@ -33,14 +40,13 @@ html, body {
 
 .App-header {
   background-color: rgb(252, 232, 232);
-  min-height: 70vh;
+  min-height: 20vh;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: black;
-  padding: 10px 10px;
 }
 
 .App-link {

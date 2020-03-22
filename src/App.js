@@ -1,11 +1,12 @@
-import React, {useState, useEffect} from 'react';
-
+import React, {useState} from 'react';
 // Import graphQL
 import { useQuery, ApolloProvider, ApolloClient, InMemoryCache, HttpLink, gql} from "@apollo/client";
+import { resolvers} from './resolvers';
+import { typeDefs } from './typeDefs';
 
 //Import Styling
 import logo from './logo.svg';
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 import './App.css';
 import Choice from './choice.js'
 
@@ -14,18 +15,33 @@ const cache = new InMemoryCache();
 const link = new HttpLink({
   uri: window.location.origin.toString()+"/graphql" 
 });
-const client = new ApolloClient({cache, link})
+
+const client = new ApolloClient({cache, resolvers, typeDefs, link})
+
+
+//Initialize the cache
+var query = gql`
+query RemovedCount{
+  removedCount @client
+}
+`
+client.writeQuery({
+  query,
+  data: {
+    removedCount: 0,
+  } 
+});
+
 
 //Initialize Styling
 const StyledChoice = styled(Choice)`
   background: #fff;
   height: 50vh;
-  width: 70vh;
-  position: relative;
+  width: 70vmin;
+  position: absolute;
   box-shadow: 0 10px 10px 0px grey;
-  border-radius: 5% 5% 5% 5%;
+  border-radius: 5%;
   margin-bottom: 2%;
-  transform-origin: 50%, 50%, 0px;
 
   &:hover, &:active{
     box-shadow: 0 20px 20px 0px grey;
@@ -38,9 +54,19 @@ const StyledChoice = styled(Choice)`
     transform: translateY(-50%);
   }
 `
-function Main() {
-  const [gone] = useState(() => new Set())
+const StyledP = styled.p`
+  background-color: #fff;
+  border-radius: 5%;
+  padding: 20px;
+  box-shadow: 0 10px 10px 0px grey;
+`
 
+
+/*
+ * Main - The main component of the app. Holds the choices of where to eat. 
+ * 
+ */
+function Main() {
   const location = "Mission Viejo, CA"
   var app_query = gql`
     query Choices($location: String!){
@@ -54,29 +80,31 @@ function Main() {
         }
     }
    }`
-  const {loading, error, data } = useQuery(app_query, {variables: {location}})
+  const {loading, error, data} = useQuery(app_query, {variables: {location}})
   var choices;
   if(error){
     return (""+error)
   }
   if(!loading){
-    console.log(gone)
-
     var business = data.search.business
-    var images = business.map((b) => b.photos[0])  
-    choices =  images.map((image, i) => <StyledChoice length={images.length} gone={gone} index={i} image={image} key={image}></StyledChoice>) 
+    var images = business.map((b) => b.photos[0])
+    images = images.reverse() 
+    choices =  images.map((image, i) => 
+              <StyledChoice index={i} image={image} key={image}>
+              </StyledChoice>) 
   }else{
       choices = <img src={logo} className="App-logo" alt="logo"/>
   }
-
     return(
           <div className="App">
             <header className="App-header" >
-              <p>
-                Having a hard time choosing a place to eat? Picker can help!
-              </p>
+              <StyledP>
+                Having a hard time picking a place to eat? Picker can help!
+              </StyledP>
             </header>
+            <div className="Choices">
             {choices}
+            </div>
             </div>
     ) 
 }

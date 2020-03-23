@@ -1,5 +1,7 @@
 *{
   user-select: none;
+  overscroll-behavior-x: none;
+
 }
 
 html, body {
@@ -16,7 +18,7 @@ html, body {
 }
 
 .Choices {
-  display: grid;
+  display: flex;
   justify-content: center;
 }
 

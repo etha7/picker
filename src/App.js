@@ -36,12 +36,10 @@ client.writeQuery({
 //Initialize Styling
 const StyledChoice = styled(Choice)`
   height: 50vh;
-
-
+  width: 70vw;
   background: #fff;
   box-shadow: 0 10px 10px 0px grey;
   border-radius: 5%;
-  
   display: flex;
   align-items: center;
   justify-content: center;
@@ -90,9 +88,10 @@ function Main() {
   if(!loading){
     var business = data.search.business
     var images = business.map((b) => b.photos[0])
-    images = images.reverse() 
+    images = [images[0], images[1]]
+    images.reverse()
     choices =  images.map((image, i) => 
-              <StyledChoice index={i} image={image} key={image}>
+              <StyledChoice index={images.length - i - 1} image={image} key={image}>
               </StyledChoice>) 
   }else{
       choices = <img src={logo} className="App-logo" alt="logo"/>

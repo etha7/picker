@@ -35,13 +35,17 @@ client.writeQuery({
 
 //Initialize Styling
 const StyledChoice = styled(Choice)`
-  background: #fff;
   height: 50vh;
-  width: 70vmin;
-  position: absolute;
+
+
+  background: #fff;
   box-shadow: 0 10px 10px 0px grey;
   border-radius: 5%;
-  margin-bottom: 2%;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
 
   &:hover, &:active{
     box-shadow: 0 20px 20px 0px grey;
@@ -50,8 +54,6 @@ const StyledChoice = styled(Choice)`
     height: 80%;
     width: 80%;
     position: relative;
-    top: 50%;
-    transform: translateY(-50%);
   }
 `
 const StyledP = styled.p`

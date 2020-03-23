@@ -33,7 +33,7 @@ function Choice(props){
 
   //Set Animation data for choices
   const [pos, set] = useSpring(() => ({
-    x: 10000,
+    x: 0,
     y: 0,  
     scale: 1, 
     rot: 0

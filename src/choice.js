@@ -16,6 +16,7 @@ const incrementCount_q = gql`
 `
 
 
+var offset = 30 //X offset between cards
 
 function Choice(props){
 
@@ -28,29 +29,20 @@ function Choice(props){
      count = data.removedCount;
   }
 
-  var offset = 30
- 
 
   //Set Animation data for choices
   const [pos, set] = useSpring(() => ({
-    x: 0,
+    x: isGone ? (500 + window.innerWidth)*side: offset*(props.index - count),
     y: 0,  
     scale: 1, 
     rot: 0
   }))
 
-  
+  /*
   useEffect(()=> {
-
-    console.log(props.image)
-    console.log(props.index)
-    console.log(count)
-    console.log(offset)
-    console.log(props.index - count)
-
     set({ x: isGone ? (500 + window.innerWidth)*side : offset*(props.index - count), scale: 1, })
  }, [set, isGone, count, props.index, side])
-
+*/
   const trans = (r, s) => `rotateY(${r / 10}deg) rotateZ(${r}deg) scale(${s})`
 
 

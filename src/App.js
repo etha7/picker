@@ -6,9 +6,8 @@ import { typeDefs } from './typeDefs';
 
 //Import Styling
 import logo from './logo.svg';
-import styled from 'styled-components'
 import './App.css';
-import Choice from './choice.js'
+import {Choice, Paragraph} from './style.js'
 
 //Initialize GraphQL
 const cache = new InMemoryCache();
@@ -32,34 +31,17 @@ client.writeQuery({
   } 
 });
 
-
-//Initialize Styling
-const StyledChoice = styled(Choice)`
-  height: 50vh;
-  width: 70vw;
-  background: #fff;
-  box-shadow: 0 10px 10px 0px grey;
-  border-radius: 5%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-
-  &:hover, &:active{
-    box-shadow: 0 20px 20px 0px grey;
-  }  
-  img {
-    height: 80%;
-    width: 80%;
-    position: relative;
-  }
+query = gql`
+query Ratings{
+  ratings @client
+}
 `
-const StyledP = styled.p`
-  background-color: #fff;
-  border-radius: 5%;
-  padding: 20px;
-  box-shadow: 0 10px 10px 0px grey;
-`
+client.writeQuery({
+  query,
+  data: {
+    ratings: {},
+  } 
+});
 
 
 /*
@@ -68,40 +50,70 @@ const StyledP = styled.p`
  */
 function Main() {
   const location = "Mission Viejo, CA"
+  var limit = 5
   var app_query = gql`
-    query Choices($location: String!){
+    query Choices($location: String!, $limit: Int!){
     search( location: $location,
-            limit: 5) {
+            limit: $limit) {
         total
         business {
             name
             url
             photos
+            rating
+            price
+            review_count
+            reviews {
+              text
+              user {
+                name
+              }
+              url
+            }
+            categories {
+              title
+            }
+            location{
+              formatted_address
+            }
+            attributes{
+              wheelchair_accessible {
+                name_code
+                value_code
+              }
+              gender_neutral_restrooms {
+                name_code
+                value_code
+              }
+              open_to_all {
+                name_code
+                value_code
+              }
+            }
         }
     }
    }`
-  const {loading, error, data} = useQuery(app_query, {variables: {location}})
+  const {loading, error, data} = useQuery(app_query, {variables: {location, limit}})
   var choices;
   if(error){
     return (""+error)
   }
   if(!loading){
     var business = data.search.business
-    var images = business.map((b) => b.photos[0])
-    images = [images[0], images[1]]
-    images.reverse()
-    choices =  images.map((image, i) => 
-              <StyledChoice index={images.length - i - 1} image={image} key={image}>
-              </StyledChoice>) 
+    var business_data = business.map((b) => { return {image: b.photos[0], ...b} })
+    business_data.reverse()
+    choices =  business_data.map((bd, i) => 
+              <Choice index={business_data.length - i - 1} {...bd} key={bd.name}>
+              </Choice>) 
   }else{
-      choices = <img src={logo} className="App-logo" alt="logo"/>
+      choices = <img src={logo} className="App-logo" alt="Loading!"/>
   }
     return(
           <div className="App">
             <header className="App-header" >
-              <StyledP>
+              <Paragraph>
                 Having a hard time picking a place to eat? Picker can help!
-              </StyledP>
+              </Paragraph>
             </header>
             <div className="Choices">
             {choices}

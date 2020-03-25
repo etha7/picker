@@ -1,11 +1,20 @@
-import gql from 'graphql-tag';
 
 export const typeDefs = `
+   type Query{
+     name
+   }
+`
+
+export const localTypeDefs = `
   type Query {
     removedCount
     rating(
       businessKey: Int!
     )
+    loggedIn(
+      username: String!
+    )
+    loginStates
   }
 
   type Mutation {
@@ -13,6 +22,10 @@ export const typeDefs = `
     setRating(
       businessKey: Int!
     ) 
+    setLoggedIn(
+      username: String!,
+      loggedIn: Boolean!
+    )
   }
 
 `;

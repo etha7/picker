@@ -5,11 +5,34 @@ const request = require("request")
 const app = express();
 const config = require("./src/config")
 const fetch = require("node-fetch");
-const {introspectSchema, makeRemoteExecutableSchema} = require('graphql-tools') 
+const {introspectSchema, makeRemoteExecutableSchema, makeExecutableSchema, mergeSchemas} = require('graphql-tools') 
 const {ApolloServer, gql} = require('apollo-server-express')
+const {transformSchemaFederation} = require('graphql-transform-federation')
+
+const { resolvers } = require('./src/serverResolvers.js')
+const { typeDefs } = require('./src/serverTypeDefs.js')
+/*
+sudo service postgresql start
+sudo service postgresql stop
+sudo -u postgres -i
+export DATABASE_URL=postgres://root:password@localhost:5432/picker
+psql
+ALTER USER root WITH SUPERUSER; 
+exit 
+exit
+psql
+CREATE DATABASE picker;
+*/
+
+//Connect to postgres server
+const { Pool } = require('pg')
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL
+})
+
+
 
 //GraphQL delegates requests from client to remote Yelp endpoint
-
 const { HttpLink }  = require("apollo-link-http")
 const link = new HttpLink({
   uri: "https://api.yelp.com/v3/graphql",
@@ -18,70 +41,34 @@ const link = new HttpLink({
   },
   fetch: fetch
 })
-setup_graphQL = async () => {
-  const schema = await introspectSchema(link)
-  const executableSchema = makeRemoteExecutableSchema({
+setup_yelp_graphQL = async () => {
+  var schema = await introspectSchema(link)
+  const remoteSchema = makeRemoteExecutableSchema({
     schema,
     link,
   });
+  const serverSchema = makeExecutableSchema({
+    resolvers, typeDefs
+  })
+  var schemas = [remoteSchema, serverSchema]
+  schema = mergeSchemas({schemas})
+  var config = {
+    Query: {
+      // Ensure the root queries of this schema show up the combined schema
+      extend: true,
+    }
+  }
+  federatedSchema = transformSchemaFederation(schema, config)
 
- const server = new ApolloServer({ schema: executableSchema})
+ const server = new ApolloServer({schema: federatedSchema, 
+                                  context: (req, res)=>{
+                                    return { pool };
+                                  }
+                                 })
  server.applyMiddleware({app})
- //app.use('/graphql', bodyParser.json(), new ApolloServer({ schema: executableSchema}))
 }
-setup_graphQL()
-/*const books = [
-  {
-    title: 'Harry Potter and the Chamber of Secrets',
-    author: 'J.K. Rowling',
-  },
-  {
-    title: 'Jurassic Park',
-    author: 'Michael Crichton',
-  },
-];
-const typeDefs = gql`
-  # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
+setup_yelp_graphQL()
 
-  # This "Book" type defines the queryable fields for every book in our data source.
-  type Book {
-    title: String
-    author: String
-  }
 
-  # The "Query" type is special: it lists all of the available queries that
-  # clients can execute, along with the return type for each. In this
-  # case, the "books" query returns an array of zero or more Books (defined above).
-  type Query {
-    books: [Book]
-  }
-`
-const resolvers = {
-  Query: {
-    books: () => books,
-  },
-};
-
-(new ApolloServer({typeDefs, resolvers})).applyMiddleware({app})*/
 app.use(express.static(path.join(__dirname, 'build')))
-
-/*app.get('/businesses', function (req, res) {
- /*var params = Object.keys(req.query).map(k => {return {[k]: req.query[k] }} )
- var esc = encodeURIComponent
- var query = params.map( o => Object.keys(o).map(k => esc(k) + "=" + esc(o[k]))).join("&")
- var options = paramsToRequest(req, config.url+query)
-
- request.get(options, (error, response, body) => {
-      res.send(body)
-    })
- var query = {}
-});*/
-
-// The "catchall" handler: for any request that doesn't
-// match one above, send back React's index.html file.
-/*app.get('*', (req, res) => {
-  //res.sendFile(path.join(__dirname+'/build/index.html'));
-});*/
-
-
 app.listen(process.env.PORT || 8080);

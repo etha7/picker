@@ -1,22 +1,20 @@
-import React, {useState} from 'react';
+import React from 'react';
 // Import graphQL
 import { useQuery, ApolloProvider, ApolloClient, InMemoryCache, HttpLink, gql} from "@apollo/client";
-import { resolvers} from './resolvers';
-import { typeDefs } from './typeDefs';
+import { localResolvers as resolvers} from './resolvers';
+import { localTypeDefs as typeDefs} from './typeDefs';
 
 //Import Styling
 import logo from './logo.svg';
 import './App.css';
-import {Choice, Paragraph} from './style.js'
+import {Choice, Paragraph, NavBar} from './style.js'
 
 //Initialize GraphQL
 const cache = new InMemoryCache();
 const link = new HttpLink({
   uri: window.location.origin.toString()+"/graphql" 
 });
-
 const client = new ApolloClient({cache, resolvers, typeDefs, link})
-
 
 //Initialize the cache
 var query = gql`
@@ -32,14 +30,14 @@ client.writeQuery({
 });
 
 query = gql`
-query Ratings{
-  ratings @client
+query GetLoginStates{
+   loginStates @client
 }
 `
 client.writeQuery({
   query,
   data: {
-    ratings: {},
+    loginStates: null,
   } 
 });
 
@@ -50,6 +48,7 @@ client.writeQuery({
  */
 function Main() {
   const location = "Mission Viejo, CA"
+  const username = "test"
   var limit = 5
   var app_query = gql`
     query Choices($location: String!, $limit: Int!){
@@ -109,6 +108,8 @@ function Main() {
       choices = <img src={logo} className="App-logo" alt="Loading!"/>
   }
     return(
+      <div>
+          <NavBar username={username}></NavBar>
           <div className="App">
             <header className="App-header" >
               <Paragraph>
@@ -118,7 +119,8 @@ function Main() {
             <div className="Choices">
             {choices}
             </div>
-            </div>
+          </div>
+      </div>
     ) 
 }
 //Main application

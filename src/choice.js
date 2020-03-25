@@ -21,10 +21,13 @@ const trans = (r, s) => `rotateY(${r / 10}deg) rotateZ(${r}deg) scale(${s})`
 function Choice(props){
 
   const {loading, error, data} = useQuery(getCount_q)
-  const [incrementCount, incLoading] = useMutation(incrementCount_q)
+  const [incrementCount] = useMutation(incrementCount_q)
   const [isGone, setGone] = useState(false)
   const [side, setSide] = useState(1)
   var count = 0;
+  if(error){
+    console.log(error)
+  }
   if(!loading){
      count = data.removedCount;
   }
@@ -38,11 +41,10 @@ function Choice(props){
   }))
 
   //Remove useEffect for production, for some reason causes issues
-  /*
   useEffect(()=> {
     set({ x: isGone ? (500 + window.innerWidth)*side : offset*(props.index - count), scale: 1, })
- }, [set, isGone, count, props.index, side])
-*/
+  }, [set, isGone, count, props.index, side])
+
 
   //Create Gesture event listeners for dragging 
   const bind = useDrag(({ args: [index], down, movement: [mx,my], direction: [xDir], velocity, previous: [ox, oy]}) => {
@@ -63,7 +65,7 @@ function Choice(props){
   })
 
   //Only top choice should be pickable ie auto
-  var pointerEvents = props.index - count == 0 ? "auto": "none"
+  var pointerEvents = props.index - count === 0 ? "auto": "none"
   //Review
   var reviews = props.reviews
   var review
@@ -81,13 +83,13 @@ function Choice(props){
 
   //Accessibility Details
   var wheelchair = props.attributes.wheelchair_accessible
-  wheelchair = wheelchair === null ? "": wheelchair.value_code == "true" ? "Wheelchair Accessible" : "Not Wheelchair Accessible"
+  wheelchair = wheelchair === null ? "": wheelchair.value_code === "true" ? "Wheelchair Accessible" : "Not Wheelchair Accessible"
 
   var restrooms = props.attributes.gender_neutral_restrooms
-  restrooms = restrooms === null ? "": restrooms.value_code == "true" ? "Gender Neutral Restrooms" : "No Gender Neutral Restrooms"
+  restrooms = restrooms === null ? "": restrooms.value_code === "true" ? "Gender Neutral Restrooms" : "No Gender Neutral Restrooms"
   
   var openToAll = props.attributes.open_to_all
-  openToAll = openToAll === null ? "": openToAll.value_code == "true" ? "Open to All" : "Not Open to All"
+  openToAll = openToAll === null ? "": openToAll.value_code === "true" ? "Open to All" : "Not Open to All"
   var access = [wheelchair, restrooms, openToAll]
   
     return( 

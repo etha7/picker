@@ -14,6 +14,7 @@ export const localTypeDefs = `
     loggedIn(
       username: String!
     )
+    username
     loginStates
   }
 

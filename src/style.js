@@ -1,13 +1,39 @@
 import styled from 'styled-components'
 import {default as sNavBar} from './NavBar.js'
 import {default as sChoice} from './choice.js'
+import {default as sChoices}from './Choices.js'
 import {default as sRating} from './Rating.js'
+import {default as sLogin } from './Login.js'
+import {default as sLoading} from './Loading.js'
+
+export const Loading = styled(sLoading)``
+
+export const Login = styled(sLogin)`
+  form {
+    padding: 30px;
+    display: flex; 
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 55vw;
+    min-width: 300px;
+    background: #fff;
+    box-shadow: 0 10px 10px 0px grey;
+    border-radius: 2%;
+    border-style: solid;
+    border-width: thin;
+    border-color: lightgrey;
+    border-radius: 5px;
+    input {
+      margin-top: 5px;
+    }
+  }
+
+`
 
 export const NavBar = styled(sNavBar)`
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
-
 
   height: 10vh;
   width: 100%;
@@ -32,7 +58,12 @@ export const NavBar = styled(sNavBar)`
     padding-left: 10px;
     padding-right: 10px;
   }
+  .item:hover{
+    background: lightgrey;
+  }
 `
+export const Choices = styled(sChoices)``
+
 export const Choice = styled(sChoice)`
 
   width: 55vw;
@@ -146,4 +177,24 @@ export const Paragraph = styled.p`
   border-radius: 5%;
   padding: 20px;
   box-shadow: 0 10px 10px 0px grey;
+`
+
+export const Button = styled.button`
+  width: 50%;
+  background-color: lightskyblue;
+  box-shadow: 0 5px 5px 0px grey;
+  margin-top: 1vh;
+  font-size: 1.5em;
+  border: none;
+  outline: none;
+  text-shadow: 0px 1px 1px #4d4d4d;
+	color: white;
+	font: 'LeagueGothicRegular';
+  &:hover{
+    box-shadow: 0 7px 7px 0px grey;
+  }
+  &:active{
+    box-shadow: inset 0 5px 5px 0px grey;
+
+  }
 `

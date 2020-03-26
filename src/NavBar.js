@@ -1,27 +1,28 @@
 import React from 'react';
-import { useQuery, gql, useMutation} from "@apollo/client";
-const SET_LOGGED_IN = gql`
-   mutation SetLoggedIn($username: String!, $loggedIn: Boolean!){
-       setLoggedIn(username: $username, loggedIn: $loggedIn) @client
-   }
-`
-const GET_LOGGED_IN = gql`
-        query GetLoggedIn($username: String!){
-        loggedIn(username: $username) @client
-        } 
-    `
+import { useQuery, useMutation} from "@apollo/client";
+import queries from './queries.js'
+
 
 function NavBar(props){
-    var variables = {username: props.username}
-    const loggedIn_result = useQuery(GET_LOGGED_IN, {variables})
-    const [setLoggedIn] = useMutation(SET_LOGGED_IN, {refetchQueries: [{query: GET_LOGGED_IN, variables}]})
-    
+    const usernameResult = useQuery(queries.GET_USERNAME)
+    const username = usernameResult.loading ? "" : usernameResult.data.username
+    const loggedIn_result = useQuery(queries.GET_LOGGED_IN, {variables: {username}})
+    const [setLoggedIn] = useMutation(queries.SET_LOGGED_IN, {refetchQueries: [{query: queries.GET_LOGGED_IN, variables: {username}}]})
     const loggedIn = loggedIn_result.loading ? false : loggedIn_result.data.loggedIn
+    const [setUsername] = useMutation(queries.SET_USERNAME, {refetchQueries: [{query: queries.GET_USERNAME}]})
+
+   
+    const logout = () =>{
+        setLoggedIn({variables: {username, loggedIn: false}})
+        setUsername({variables: {username: ""}})
+    }
+
+    var usernameDiv = username === ''? null : <div className="item">{username}</div>
+    var logoutDiv = !loggedIn ? null : <div className="item" onClick={logout}>Logout</div>
     return(
         <div className={props.className}>
-            <div className="item" onClick={() => {
-                    setLoggedIn({variables: {username: props.username, loggedIn: !loggedIn}})
-             }}>{loggedIn ? "Logout" : "Login"}</div>
+             {logoutDiv}
+             {usernameDiv}
         </div>
     )
 }

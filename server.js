@@ -11,26 +11,12 @@ const {transformSchemaFederation} = require('graphql-transform-federation')
 
 const { resolvers } = require('./src/serverResolvers.js')
 const { typeDefs } = require('./src/serverTypeDefs.js')
-/*
-sudo service postgresql start
-sudo service postgresql stop
-sudo -u postgres -i
-export DATABASE_URL=postgres://root:password@localhost:5432/picker
-psql
-ALTER USER root WITH SUPERUSER; 
-exit 
-exit
-psql
-CREATE DATABASE picker;
-*/
 
 //Connect to postgres server
 const { Pool } = require('pg')
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL
 })
-
-
 
 //GraphQL delegates requests from client to remote Yelp endpoint
 const { HttpLink }  = require("apollo-link-http")
@@ -62,7 +48,7 @@ setup_yelp_graphQL = async () => {
 
  const server = new ApolloServer({schema: federatedSchema, 
                                   context: (req, res)=>{
-                                    return { pool };
+                                    return { req, res, pool };
                                   }
                                  })
  server.applyMiddleware({app})

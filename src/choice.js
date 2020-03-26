@@ -115,5 +115,4 @@ function Choice(props){
           </animated.div>
       </div>
     )
-
 } export default Choice

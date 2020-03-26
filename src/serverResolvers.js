@@ -25,6 +25,22 @@ exports.resolvers = {
                     return !(res.rows[0].count == '0')
                 }) 
             })
-        }
+        },
+        createUser: (_, args, { pool }) => {
+            console.log("createUser")
+            return pool.connect().then( client => {
+                return client
+                .query(`INSERT INTO users(username, password) VALUES ('${args.username}', '${args.password}');`)
+                .then( res => {
+                    client.release()
+                    return true
+                })
+                .catch(err =>{
+                    console.log(err)
+                    return false
+                })
+            })
+        },
+        
     }
 }

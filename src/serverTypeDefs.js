@@ -7,4 +7,5 @@ exports.typeDefs = `
 
    type Mutation {
      login(username:String!, password: String!): Boolean!
+     createUser(username: String!, password: String!): Boolean!
    }`

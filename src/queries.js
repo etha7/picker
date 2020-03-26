@@ -85,6 +85,12 @@ const SEARCH = gql`
     }
 }`
 
+const CREATE_USER = gql`
+   mutation CreateUser($username: String!, $password: String!){
+     createUser(username: $username, password: $password)
+   }
+`
+
 const queries = {
     GET_USERNAME,
     SET_USERNAME,
@@ -94,6 +100,7 @@ const queries = {
     GET_REMOVED_COUNT,
     GET_RATINGS,
     LOGIN, 
-    SEARCH
+    SEARCH,
+    CREATE_USER
 }
 export default queries;

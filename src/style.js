@@ -9,6 +9,11 @@ import {default as sLoading} from './Loading.js'
 export const Loading = styled(sLoading)``
 
 export const Login = styled(sLogin)`
+  .buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
   form {
     padding: 30px;
     display: flex; 
@@ -26,6 +31,18 @@ export const Login = styled(sLogin)`
     input {
       margin-top: 5px;
     }
+    button {
+      margin-left: 10px;
+      margin-right: 10px;
+    }
+  }
+  .error{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 2px;
+    background-color: lightcoral;
+    flex: 1 1 auto;
   }
 
 `

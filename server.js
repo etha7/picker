@@ -15,7 +15,7 @@ const { typeDefs } = require('./src/serverTypeDefs.js')
 //Connect to postgres server
 const { Pool } = require('pg')
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL
+  connectionString: process.env.DATABASE_URL+"?sslmode=require"
 })
 
 //GraphQL delegates requests from client to remote Yelp endpoint

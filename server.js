@@ -30,6 +30,8 @@ const link = new HttpLink({
   },
   fetch: fetch
 })
+
+
 setup_yelp_graphQL = async () => {
   var schema = await introspectSchema(link)
   const remoteSchema = makeRemoteExecutableSchema({
@@ -43,7 +45,7 @@ setup_yelp_graphQL = async () => {
   schema = mergeSchemas({schemas})
   var config = {
     Query: {
-      // Ensure the root queries of this schema show up the combined schema
+    // Ensure the root queries of this schema show up the combined schema
       extend: true,
     }
   }
@@ -55,10 +57,13 @@ setup_yelp_graphQL = async () => {
                                   }
                                  })
  server.applyMiddleware({app})
+ return server.graphqlPath
 }
-setup_yelp_graphQL()
+graphqlPath = setup_yelp_graphQL()
 
 app.use(express.static(path.join(__dirname, 'build')))
-server = app.listen({port: process.env.PORT || 8080}, () => {
-  console.log(`Server ready at http://localhost:${port}${server.graphqlPath}`)
+
+port = process.env.PORT || 8080
+server = app.listen(port, async () => {
+  console.log(`Server ready at http://localhost:${port}${await graphqlPath}`)
 });

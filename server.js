@@ -58,6 +58,7 @@ setup_yelp_graphQL = async () => {
 }
 setup_yelp_graphQL()
 
-
 app.use(express.static(path.join(__dirname, 'build')))
-app.listen(process.env.PORT || 8080);
+server = app.listen({port: process.env.PORT || 8080}, () => {
+  console.log(`Server ready at http://localhost:${port}${server.graphqlPath}`)
+});

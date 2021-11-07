@@ -78,9 +78,11 @@ test_pg_connection = async () => {
   }
   
 }
-test_pg_connection()
 
 port = process.env.PORT || 8080
 server = app.listen(port, async () => {
   console.log(`Server ready at http://localhost:${port}${await graphqlPath}`)
+  console.log(`PG connection test: `)
+  test_pg_connection()
+
 });

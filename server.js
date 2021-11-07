@@ -53,15 +53,27 @@ setup_yelp_graphQL = async () => {
 
  const server = new ApolloServer({schema: federatedSchema, 
                                   context: (req, res)=>{
-                                    return { req, res, pool };
+                                    return { req, res, pool: pool };
                                   }
                                  })
  server.applyMiddleware({app})
+
  return server.graphqlPath
 }
+
 graphqlPath = setup_yelp_graphQL()
 
 app.use(express.static(path.join(__dirname, 'build')))
+
+test_pg_connection = async () => {
+  try{
+    var client = await pool.connect()
+    client.release()
+  } catch (error) {
+    console.log(error)
+  }
+}
+test_pg_connection()
 
 port = process.env.PORT || 8080
 server = app.listen(port, async () => {

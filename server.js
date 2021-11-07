@@ -67,8 +67,10 @@ app.use(express.static(path.join(__dirname, 'build')))
 
 test_pg_connection = async () => {
   try{
+    console.log("Connecting to PG")
     var client = await pool.connect()
     var result = await client.query("SELECT * FROM users")
+    console.log("Result of query: ")
     console.log(result)
     client.release()
   } catch (error) {
@@ -76,6 +78,7 @@ test_pg_connection = async () => {
   } finally {
     console.log("finished pg")
   }
+  console.log("really finished")
   
 }
 
@@ -83,6 +86,6 @@ port = process.env.PORT || 8080
 server = app.listen(port, async () => {
   console.log(`Server ready at http://localhost:${port}${await graphqlPath}`)
   console.log(`PG connection test: `)
-  test_pg_connection()
+  await test_pg_connection()
 
 });

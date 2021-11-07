@@ -68,10 +68,15 @@ app.use(express.static(path.join(__dirname, 'build')))
 test_pg_connection = async () => {
   try{
     var client = await pool.connect()
+    var result = await client.query("SELECT * FROM users")
+    console.log(result)
     client.release()
   } catch (error) {
     console.log(error)
+  } finally {
+    console.log("finished pg")
   }
+  
 }
 test_pg_connection()
 
